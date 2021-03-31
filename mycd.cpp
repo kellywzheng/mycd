@@ -130,6 +130,9 @@ string getNewPath(string curr_dir, string new_dir) {
     return result;
 }
 
+/*
+Run the example test cases
+*/
 void runTests() {
     vector<pair<string, string> > testPairs{ 
             make_pair("/", "abc"), 

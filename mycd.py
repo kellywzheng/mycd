@@ -82,6 +82,9 @@ def process_stack(stack, split_list):
 
     return stack
 
+'''
+Run the example test cases
+'''
 def run_tests():
     test_pairs = [
             ("/", "abc"),  
