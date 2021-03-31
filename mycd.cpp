@@ -1,9 +1,10 @@
 #include <iostream>
 #include <string>
 #include <regex>
-#include <stack>
+#include <deque>
 #include <cstring>
 #include <locale> 
+#include <utility>
 
 using namespace std;
 
@@ -17,12 +18,12 @@ void simplify(string &directory)
     while (true) {
         string old_dir = directory;
         regex slashes("(//+)");
-        regex dots("(/../)");
+        regex dots("([A-Za-z0-9]+/../)");
         smatch matches;
         
         directory = regex_replace(directory, slashes, "/");                             // replace multiple "/" to a single slash
         
-        regex_search(directory, matches, dots);                                         // find the first occurence of "/../"
+        regex_search(directory, matches, dots);                                         // find the first occurence of "filename/../"
         int idx = matches.position(0);
         if (idx > 0 and matches[0] == "/../") {
             int prev_idx = directory.rfind('/', idx - 1);                               // find the last occurence of "/" in the range 0 to idx - 1
@@ -36,43 +37,51 @@ void simplify(string &directory)
 }
 
 /*
-
+Check if a given string is alphanumeric
 */
 bool isAlnumStr(string str) {
-    for (int i = 0; str[i] != '\0'; i++) {
+    for (int i = 0; str[i] != '\0'; i++) {                          // For every character in the string, check if it's alphanumeric
         if (!isalnum(str[i]))
             return false;
     }
     return true;
 }
 
-stack<string> processStack(stack<string> stack, vector<string> splitList) {
+/*
+Given a double-ended queue and a vector of a split directory path, 
+update the deque based on the commands seen in the list
+*/
+deque<string> processQueue(deque<string> deque, vector<string> splitList) {
     for (int i = 0; i < splitList.size(); i++) {
         if (splitList[i] == "..") {
-            if (!stack.empty())
-                stack.pop();
+            if (!deque.empty())
+                deque.pop_back();
         }
         else if (splitList[i] == "." || splitList[i] == "/")
             continue;
         else
-            stack.push(splitList[i]);
+            deque.push_back(splitList[i]);
     }
     
-    return stack;
+    return deque;
 }
 
+/*
+Given the current directory path and a new directory path, 
+return either a new path or an error message
+*/
 string getNewPath(string curr_dir, string new_dir) {     
-    stack<string> curr_dir_stack;                                       // Split the current directory by "/" and add to stack
+    deque<string> curr_dir_deque;                                           // Split the current directory by "/" and add to deque
     char *curr_dir_arr = &curr_dir[0];
     char *token = strtok(curr_dir_arr, "/");                            
     while (token) {
         if (token)
-            curr_dir_stack.push(token);
+            curr_dir_deque.push_back(token);
         token = strtok(NULL, "/");
     }
     
     vector<string> new_dir_split;
-    char *new_dir_arr = &new_dir[0];                                    // Split the new directory by "/" and keep "/"
+    char *new_dir_arr = &new_dir[0];                                        // Split the new directory by "/" and keep "/"
     if (strncmp(new_dir_arr, "/", 1) == 0)
         new_dir_split.push_back("/");
     token = strtok(new_dir_arr, "/");                            
@@ -84,33 +93,33 @@ string getNewPath(string curr_dir, string new_dir) {
         token = strtok(NULL, "/");
     }
         
-    if (!isAlnumStr(new_dir_split[0])                                   // Check if the new directory path is valid
+    if (!isAlnumStr(new_dir_split[0])                                       // Check if the new directory path is valid
         && (new_dir_split[0] != "/") 
         && (new_dir_split[0] != ".")
         && (new_dir_split[0] != ".."))
         return (new_dir + ":" + " No such file or directory");
     
-    stack<string> s;
-    if (new_dir_split[0] == "/") {                                      // If the new directory path contains a leading "/"
-        stack<string> new_dir_stack;
+    deque<string> dq;
+    if (new_dir_split[0] == "/") {                                          // If the new directory path contains a leading "/"
+        deque<string> new_dir_deque;
         for (int i = 0; i < new_dir_split.size(); i++) {
-            if (new_dir_split[i] != "" && isAlnumStr(new_dir_split[i])) {    // Fill stack according to the path in new_dir
-                new_dir_stack.push(new_dir_split[i]);
+            if (new_dir_split[i] != "" && isAlnumStr(new_dir_split[i])) {    // Fill deque according to the path in new_dir
+                new_dir_deque.push_back(new_dir_split[i]);
                 new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[i]), new_dir_split.end());
             }
         }
-        s = processStack(new_dir_stack, new_dir_split);
+        dq = processQueue(new_dir_deque, new_dir_split);
     }
     else
-        s = processStack(curr_dir_stack, new_dir_split);
+        dq = processQueue(curr_dir_deque, new_dir_split);
 
-    string result = "";                                                         // Create a path based on the stack
-    if (s.empty())
+    string result = "";                                                      // Create a path based on the deque
+    if (dq.empty())
         result = "/";
     else {
-        while (!s.empty()) {
-            string section = s.top();
-            s.pop();
+        while (!dq.empty()) {
+            string section = dq.front();
+            dq.pop_front();
             if (section != "") {
                 result += "/";
                 result += section;
@@ -121,14 +130,44 @@ string getNewPath(string curr_dir, string new_dir) {
     return result;
 }
 
+void runTests() {
+    vector<pair<string, string> > testPairs{ 
+            make_pair("/", "abc"), 
+            make_pair("/abc/def", "ghi"),
+            make_pair("/abc/def", ".."),
+            make_pair("/abc/def", "/abc"),
+            make_pair("/abc/def", "/abc/klm"),
+            make_pair("/abc/def", "../.."),
+            make_pair("/abc/def", "../../.."),
+            make_pair("/abc/def", "."),
+            make_pair("/abc/def", "..klm"),
+            make_pair("/abc/def", "//////"),
+            make_pair("/abc/def", "......"),
+            make_pair("/abc/def", "../gh///../klm/.")
+        };
+    
+    for (int i = 0; i < testPairs.size(); i++) {
+        simplify(testPairs[i].second);
+        cout << getNewPath(testPairs[i].first, testPairs[i].second) << endl;
+    }
+}
+
 int main(int argc, char** argv)
 {
-    string curr_directory = argv[1];
-    string new_directory = argv[2];
-
-    simplify(new_directory);
-    cout << "new_directory: " << new_directory << endl;
+    if (argc == 1) {
+        runTests();
+        return 0;
+    }
+    else if (argc == 3) {
+        string curr_directory = argv[1];
+        string new_directory = argv[2];
     
-    cout << getNewPath(curr_directory, new_directory) << endl;
-    return 0;
+        simplify(new_directory);  
+        cout << getNewPath(curr_directory, new_directory) << endl;
+        return 0;
+    }
+    else {
+        cout << "Invalid number of inputs" << endl;
+        return 0;
+    }
 }

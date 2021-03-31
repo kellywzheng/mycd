@@ -11,7 +11,7 @@ def simplify(directory):
         old_dir = directory
         directory = re.sub("//+", '/', directory)                       # replace multiple "/" to a single slash
 
-        idx = directory.find('/../')                                    # find the first occurence of "/../"
+        idx = directory.find('[A-Za-z0-9]+/../')                        # find the first occurence of "filename/../"
         if idx > 0:
             prev_idx = directory.rfind('/', 0, idx)                     # find the last occurence of "/" in the range 0 to idx
             idx = idx + 4                                               # increment idx to now be at the start of the next file name component
@@ -83,17 +83,37 @@ def process_stack(stack, split_list):
     return stack
 
 def run_tests():
-    pass
+    test_pairs = [
+            ("/", "abc"),  
+            ("/abc/def", "ghi"), 
+            ("/abc/def", ".."), 
+            ("/abc/def", "/abc"), 
+            ("/abc/def", "/abc/klm"), 
+            ("/abc/def", "../.."), 
+            ("/abc/def", "../../.."),
+            ("/abc/def", "."),
+            ("/abc/def", "..klm"),
+            ("/abc/def", "//////"),
+            ("/abc/def", "......"),
+            ("/abc/def", "../gh///../klm/.")
+        ]
+    
+    for pair in test_pairs:
+        new_directory = simplify(pair[1])
+        print(get_new_path(pair[0], new_directory))
     
 def main():
     if len(sys.argv) == 1:
         run_tests()
         return
-
-    curr_directory = sys.argv[1]
-    new_directory = sys.argv[2]
-    new_directory = simplify(new_directory)
-    print(get_new_path(curr_directory, new_directory))
+    elif len(sys.argv) == 2:
+        print("Invalid input")
+        return
+    else:
+        curr_directory = sys.argv[1]
+        new_directory = sys.argv[2]
+        new_directory = simplify(new_directory)
+        print(get_new_path(curr_directory, new_directory))
     
        
 if __name__ == "__main__":
