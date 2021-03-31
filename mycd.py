@@ -109,15 +109,14 @@ def main():
     if len(sys.argv) == 1:
         run_tests()
         return
-    elif len(sys.argv) == 2:
-        print("Invalid input")
-        return
-    else:
+    elif len(sys.argv) == 3:
         curr_directory = sys.argv[1]
         new_directory = sys.argv[2]
         new_directory = simplify(new_directory)
         print(get_new_path(curr_directory, new_directory))
-    
+    else:
+        print("Invalid input")
+        return    
        
 if __name__ == "__main__":
     main()
