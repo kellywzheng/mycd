@@ -4,7 +4,7 @@ import re
 '''
 Reduce multiple consecutive forward-slashes ("/") to one forward-slash
 Remove any sequence that consists of a file name component (other than "." or ".."), 
-followed by "/", followed by the file name component ".."
+followed by "/", followed by the file name component ".." (ex. abc/..)
 '''
 def simplify(directory):
     while True:
