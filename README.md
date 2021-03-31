@@ -6,20 +6,26 @@ Implementations of the "cd" Unix command in C++ and Python
 Download the zip file of the repository. In the command line, navigate to the zip file's directory.
 
 ### Python:
-To run the example test cases: \
+To run the example test cases:
 ```
 python3 mycd.py
 ```
-To provide your own test case: \
-* python3 mycd.py (current directory) (new directory)
+To provide your own test case: 
+```
+python3 mycd.py (current directory) (new directory)
+```
 
 ### C++:
-To run the example test cases: \ 
-* g++ -std=c++11 mycd.cpp\
-* ./a.out\
-To provide your own test case: \
-* g++ -std=c++11 mycd.cpp\
-* ./a.out (current directory) (new directory)
+To run the example test cases:
+```
+g++ -std=c++11 mycd.cpp
+./a.out
+```
+To provide your own test case:
+```
+g++ -std=c++11 mycd.cpp
+./a.out (current directory) (new directory)
+```
 
 ## Test Results
 
