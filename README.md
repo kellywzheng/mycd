@@ -7,7 +7,9 @@ Download the zip file of the repository. In the command line, navigate to the zi
 
 ### Python:
 To run the example test cases: \
-* python3 mycd.py\
+```
+python3 mycd.py
+```
 To provide your own test case: \
 * python3 mycd.py (current directory) (new directory)
 
