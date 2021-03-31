@@ -7,17 +7,17 @@ Download the zip file of the repository. In the command line, navigate to the zi
 
 ### Python:
 To run the example test cases: \
-...python3 mycd.py\
+* python3 mycd.py\
 To provide your own test case: \
-...python3 mycd.py (current directory) (new directory)
+* python3 mycd.py (current directory) (new directory)
 
 ### C++:
 To run the example test cases: \ 
-...g++ -std=c++11 mycd.cpp\
-... ./a.out\
+* g++ -std=c++11 mycd.cpp\
+* ./a.out\
 To provide your own test case: \
-...g++ -std=c++11 mycd.cpp\
-... ./a.out (current directory) (new directory)
+* g++ -std=c++11 mycd.cpp\
+* ./a.out (current directory) (new directory)
 
 ## Test Results
 
