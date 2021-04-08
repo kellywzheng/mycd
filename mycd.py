@@ -47,13 +47,15 @@ def get_new_path(curr_dir, new_dir):
         
     if new_dir_split[0] == "/":                                         # If the new directory path contains a leading "/"
         new_dir_stack = []
-        size = len(new_dir_split)
+        
         ''' OLD VERSION of the for loop
         for split in new_dir_split:
             if split and split.isalnum():                               # Fill stack according to the path in new_dir
                 new_dir_stack.append(split)
                 new_dir_split.remove(split)
         '''
+        
+        size = len(new_dir_split)
         for i in range(size):
             if new_dir_split[0] and new_dir_split[0].isalnum():
                 new_dir_stack.append(new_dir_split[0])
