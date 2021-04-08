@@ -62,7 +62,6 @@ deque<string> processQueue(deque<string> deque, vector<string> splitList) {
         else
             deque.push_back(splitList[i]);
     }
-    
     return deque;
 }
 
@@ -102,11 +101,22 @@ string getNewPath(string curr_dir, string new_dir) {
     deque<string> dq;
     if (new_dir_split[0] == "/") {                                          // If the new directory path contains a leading "/"
         deque<string> new_dir_deque;
+        
+        /* OLD VERSION of the for loop
         for (int i = 0; i < new_dir_split.size(); i++) {
             if (new_dir_split[i] != "" && isAlnumStr(new_dir_split[i])) {    // Fill deque according to the path in new_dir
                 new_dir_deque.push_back(new_dir_split[i]);
                 new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[i]), new_dir_split.end());
             }
+        }
+        */
+        
+        int size = new_dir_split.size();
+        for (int i = 0; i < size; i++) {
+            if (new_dir_split[0] != "" && isAlnumStr(new_dir_split[0]))    // Fill deque according to the path in new_dir
+                new_dir_deque.push_back(new_dir_split[0]);
+
+            new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[0]), new_dir_split.end());
         }
         dq = processQueue(new_dir_deque, new_dir_split);
     }
@@ -165,7 +175,7 @@ int main(int argc, char** argv)
         string curr_directory = argv[1];
         string new_directory = argv[2];
     
-        simplify(new_directory);  
+        simplify(new_directory); 
         cout << getNewPath(curr_directory, new_directory) << endl;
         return 0;
     }
