@@ -111,12 +111,43 @@ string getNewPath(string curr_dir, string new_dir) {
         }
         */
         
+        /*
         int size = new_dir_split.size();
         for (int i = 0; i < size; i++) {
-            if (new_dir_split[0] != "" && isAlnumStr(new_dir_split[0]))    // Fill deque according to the path in new_dir
+            if (!isAlnumStr(new_dir_split[0])                                       // Check if the new directory path is valid
+                && (new_dir_split[0] != "/") 
+                && (new_dir_split[0] != ".")
+                && (new_dir_split[0] != ".."))
+                return (new_dir_split[0] + ":" + " No such file or directory");
+                
+            if (new_dir_split[0] != "" && isAlnumStr(new_dir_split[0])) {    // Fill deque according to the path in new_dir
                 new_dir_deque.push_back(new_dir_split[0]);
-
-            new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[0]), new_dir_split.end());
+                new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[0]), new_dir_split.end());
+            }
+            else {
+                continue;
+            }
+        }
+        */
+        int j = 0;
+        int size = new_dir_split.size();
+        for (int i = 0; i < size; i++) {
+            if (!isAlnumStr(new_dir_split[j])                                       // Check if the path element is valid
+                && (new_dir_split[j] != "/") 
+                && (new_dir_split[j] != ".")
+                && (new_dir_split[j] != ".."))
+                return (new_dir_split[j] + ":" + " No such file or directory");
+                
+            if (new_dir_split[j] != "" && isAlnumStr(new_dir_split[j])) {       // Fill deque according to the path in new_dir
+                new_dir_deque.push_back(new_dir_split[j]);
+                new_dir_split.erase(remove(new_dir_split.begin(), new_dir_split.end(), new_dir_split[j]), new_dir_split.end());
+                if (j != 0)
+                    j--;
+            }
+            else {
+                j++;
+                continue;
+            }
         }
         dq = processQueue(new_dir_deque, new_dir_split);
     }

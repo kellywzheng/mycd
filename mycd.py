@@ -54,12 +54,25 @@ def get_new_path(curr_dir, new_dir):
                 new_dir_stack.append(split)
                 new_dir_split.remove(split)
         '''
-        
+        j = 0
         size = len(new_dir_split)
         for i in range(size):
-            if new_dir_split[0] and new_dir_split[0].isalnum():
-                new_dir_stack.append(new_dir_split[0])
-            new_dir_split.remove(new_dir_split[0])
+            if (                                                                # Check if the new directory path is valid 
+                not new_dir_split[j].isalnum() 
+                and new_dir_split[j] != "/" 
+                and new_dir_split[j] != "." 
+                and new_dir_split[j] != ".."
+              ):
+                return(new_dir_split[j] + ":" + " No such file or directory")  
+        
+            if new_dir_split[j] and new_dir_split[j].isalnum():
+                new_dir_stack.append(new_dir_split[j])
+                new_dir_split.remove(new_dir_split[j])
+                if j != 0:
+                    j -= 1
+            else:
+                j += 1
+                continue
             
         stack = process_stack(new_dir_stack, new_dir_split)
     else:
